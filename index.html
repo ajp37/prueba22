@@ -1,114 +1,57 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kebap Estambul</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Restaurant Template</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
 
-<header class="header">
-  <div class="container">
-    <div class="logo">KEBAP <span>ESTAMBUL</span></div>
-    <nav>
-      <a href="#inicio">Inicio</a>
-      <a href="#menu">Carta</a>
-      <a href="#contacto">Contacto</a>
-    </nav>
+<nav class="navbar">
+  <div class="brand-title">Restaurant</div>
+  <a href="#" class="toggle-button">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </a>
+  <div class="navbar-links">
+    <ul>
+      <li><a href="#pizza">Pizza</a></li>
+      <li><a href="#pasta">Pasta</a></li>
+      <li><a href="#starters">Starters</a></li>
+    </ul>
   </div>
+</nav>
+
+<header class="hero">
+  <h1>Welcome to Our Restaurant</h1>
+  <p>Experience the best food in town</p>
 </header>
 
-<section class="hero" id="inicio">
-  <div class="overlay"></div>
-  <div class="hero-content">
-    <h1>Auténtico Sabor Turco</h1>
-    <p>Kebabs, Durums y platos tradicionales</p>
-    <a href="#menu" class="btn">Ver Carta</a>
+<section class="menu">
+  <div class="tabs">
+    <button class="tab-button active" data-target="pizza">Pizza</button>
+    <button class="tab-button" data-target="pasta">Pasta</button>
+    <button class="tab-button" data-target="starters">Starters</button>
+  </div>
+
+  <div class="tab-content pizza active" id="pizza">
+    <h2>Pizza Collection</h2>
+    <p>Delicious pizzas with fresh ingredients!</p>
+  </div>
+
+  <div class="tab-content pasta" id="pasta">
+    <h2>Pasta Specialties</h2>
+    <p>Traditional pasta dishes full of flavor!</p>
+  </div>
+
+  <div class="tab-content starters" id="starters">
+    <h2>Starters & Salads</h2>
+    <p>Fresh starters to begin your meal.</p>
   </div>
 </section>
 
-<section class="menu-section" id="menu">
-  <div class="container">
-    <h2>Nuestra Carta</h2>
-
-    <div class="menu-filters">
-      <button class="filter-btn active" data-filter="all">Todo</button>
-      <button class="filter-btn" data-filter="kebab">Kebabs</button>
-      <button class="filter-btn" data-filter="durum">Durums</button>
-      <button class="filter-btn" data-filter="plato">Platos</button>
-      <button class="filter-btn" data-filter="bebida">Bebidas</button>
-      <button class="filter-btn" data-filter="postre">Postres</button>
-    </div>
-
-    <div class="menu-grid">
-
-      <!-- KEBABS -->
-      <div class="menu-item kebab">
-        <img src="https://picsum.photos/400/300?food=1">
-        <h3>Kebab Pollo</h3>
-        <p>Pollo, lechuga, tomate y salsa blanca</p>
-        <span>5.50€</span>
-      </div>
-
-      <div class="menu-item kebab">
-        <img src="https://picsum.photos/400/300?food=2">
-        <h3>Kebab Mixto</h3>
-        <p>Pollo y ternera con salsa especial</p>
-        <span>6.00€</span>
-      </div>
-
-      <!-- DURUMS -->
-      <div class="menu-item durum">
-        <img src="https://picsum.photos/400/300?food=3">
-        <h3>Durum Ternera</h3>
-        <p>Ternera con verduras frescas</p>
-        <span>6.50€</span>
-      </div>
-
-      <!-- PLATOS -->
-      <div class="menu-item plato">
-        <img src="https://picsum.photos/400/300?food=4">
-        <h3>Plato Estambul</h3>
-        <p>Carne, arroz, patatas y ensalada</p>
-        <span>8.90€</span>
-      </div>
-
-      <!-- BEBIDAS -->
-      <div class="menu-item bebida">
-        <img src="https://picsum.photos/400/300?drink=1">
-        <h3>Coca-Cola</h3>
-        <p>Lata 33cl</p>
-        <span>2.00€</span>
-      </div>
-
-      <!-- POSTRES -->
-      <div class="menu-item postre">
-        <img src="https://picsum.photos/400/300?dessert=1">
-        <h3>Baklava</h3>
-        <p>Pastel tradicional turco con miel</p>
-        <span>3.50€</span>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<section class="cta">
-  <h2>Pide para llevar</h2>
-  <p>Llámanos y lo preparamos al momento</p>
-  <a href="tel:+34999999999" class="btn btn-dark">Llamar Ahora</a>
-</section>
-
-<footer id="contacto">
-  <p>© 2026 Kebap Estambul · Logroño</p>
-</footer>
-
-<a href="https://wa.me/34999999999" class="whatsapp">💬</a>
-
-<script src="js/script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
