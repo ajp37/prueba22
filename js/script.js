@@ -1,25 +1,18 @@
-const filterButtons = document.querySelectorAll(".filter-btn");
-const menuItems = document.querySelectorAll(".menu-item");
+const buttons = document.querySelectorAll(".tab-button");
+const contents = document.querySelectorAll(".tab-content");
 
-filterButtons.forEach(button => {
-  button.addEventListener("click", () => {
+buttons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    buttons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
 
-    document.querySelector(".filter-btn.active").classList.remove("active");
-    button.classList.add("active");
-
-    const filter = button.getAttribute("data-filter");
-
-    menuItems.forEach(item => {
-      if(filter === "all"){
-        item.style.display = "block";
+    const target = btn.dataset.target;
+    contents.forEach(c => {
+      if (c.id === target) {
+        c.classList.add("active");
       } else {
-        if(item.classList.contains(filter)){
-          item.style.display = "block";
-        } else {
-          item.style.display = "none";
-        }
+        c.classList.remove("active");
       }
     });
-
   });
 });
