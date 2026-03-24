@@ -1,57 +1,137 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Restaurant Template</title>
-  <link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8">
+    <title>Tiya Jesupas Shop</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(120deg, #4facfe, #00f2fe);
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header {
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 30px;
+        }
+
+        .titulo {
+            font-size: 40px;
+            animation: aparecer 2s ease-in-out;
+        }
+
+        .subtitulo {
+            font-size: 18px;
+            opacity: 0.8;
+        }
+
+        .producto, .carrito {
+            background-color: white;
+            margin: 30px auto;
+            padding: 20px;
+            width: 300px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .producto:hover, .carrito:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0,0,0,0.5);
+        }
+
+        .precio {
+            font-size: 24px;
+            color: green;
+            font-weight: bold;
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        #mensaje {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 18px;
+            color: darkblue;
+        }
+
+        @keyframes aparecer {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 <body>
 
-<nav class="navbar">
-  <div class="brand-title">Restaurant</div>
-  <a href="#" class="toggle-button">
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-  </a>
-  <div class="navbar-links">
-    <ul>
-      <li><a href="#pizza">Pizza</a></li>
-      <li><a href="#pasta">Pasta</a></li>
-      <li><a href="#starters">Starters</a></li>
-    </ul>
-  </div>
-</nav>
-
-<header class="hero">
-  <h1>Welcome to Our Restaurant</h1>
-  <p>Experience the best food in town</p>
+<header>
+    <h1 class="titulo">Tiya Jesupas</h1>
+    <p class="subtitulo">La mejor tienda de cabezaniperos</p>
 </header>
 
-<section class="menu">
-  <div class="tabs">
-    <button class="tab-button active" data-target="pizza">Pizza</button>
-    <button class="tab-button" data-target="pasta">Pasta</button>
-    <button class="tab-button" data-target="starters">Starters</button>
-  </div>
+<main>
+    <div class="producto">
+        <h2>Cabezanipero</h2>
+        <p class="precio">20€</p>
+        <button onclick="comprar()">Comprar</button>
+    </div>
 
-  <div class="tab-content pizza active" id="pizza">
-    <h2>Pizza Collection</h2>
-    <p>Delicious pizzas with fresh ingredients!</p>
-  </div>
+    <div class="carrito">
+        <h3>Carrito</h3>
+        <p>Productos: <span id="contador">0</span></p>
+        <p>Total: <span id="total">0</span> €</p>
+        <button onclick="vaciarCarrito()">Vaciar carrito</button>
+    </div>
 
-  <div class="tab-content pasta" id="pasta">
-    <h2>Pasta Specialties</h2>
-    <p>Traditional pasta dishes full of flavor!</p>
-  </div>
+    <p id="mensaje"></p>
+</main>
 
-  <div class="tab-content starters" id="starters">
-    <h2>Starters & Salads</h2>
-    <p>Fresh starters to begin your meal.</p>
-  </div>
-</section>
+<script>
+    let contador = 0;
+    let total = 0;
+    const precio = 20;
 
-<script src="js/script.js"></script>
+    function comprar() {
+        contador++;
+        total += precio;
+
+        document.getElementById("contador").innerText = contador;
+        document.getElementById("total").innerText = total;
+        document.getElementById("mensaje").innerText = "Has comprado un cabezanipero 😎";
+    }
+
+    function vaciarCarrito() {
+        contador = 0;
+        total = 0;
+
+        document.getElementById("contador").innerText = contador;
+        document.getElementById("total").innerText = total;
+        document.getElementById("mensaje").innerText = "Carrito vaciado";
+    }
+</script>
+
 </body>
 </html>
