@@ -1,128 +1,446 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Tiya Jesupas Shop</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(120deg, #4facfe, #00f2fe);
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
-
-        header {
-            background-color: rgba(0,0,0,0.7);
-            color: white;
-            padding: 30px;
-        }
-
-        .titulo {
-            font-size: 40px;
-        }
-
-        .centro {
-            margin-top: 40px;
-            font-size: 80px;
-            animation: flotar 3s infinite ease-in-out;
-        }
-
-        .texto {
-            font-size: 30px;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        .producto, .carrito {
-            background-color: white;
-            margin: 30px auto;
-            padding: 20px;
-            width: 300px;
-            border-radius: 15px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
-        }
-
-        .precio {
-            font-size: 24px;
-            color: green;
-            font-weight: bold;
-        }
-
-        button {
-            background-color: #333;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background-color: #555;
-        }
-
-        @keyframes flotar {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PokéAPI Lab — API Explorer</title>
+<meta name="description" content="Explorador completo y visual de PokéAPI: recursos, búsquedas, paginación, JSON, historial y favoritos.">
+<style>
+:root{
+  --bg:#0a0d14; --panel:#111722; --panel2:#151c29; --border:#263246;
+  --text:#eef3ff; --muted:#8e9ab0; --red:#ef3340; --red2:#ff5360;
+  --yellow:#ffd23f; --blue:#4da3ff; --green:#42d392; --purple:#a98cff;
+  --shadow:0 18px 60px rgba(0,0,0,.35); --radius:18px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:
+  radial-gradient(circle at 15% -10%,rgba(239,51,64,.18),transparent 30rem),
+  radial-gradient(circle at 90% 10%,rgba(77,163,255,.12),transparent 26rem),var(--bg);
+  color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh;display:grid;grid-template-columns:280px 1fr}
+.sidebar{
+  position:sticky;top:0;height:100vh;overflow:auto;border-right:1px solid var(--border);
+  background:rgba(10,13,20,.88);backdrop-filter:blur(18px);padding:22px 16px;
+}
+.brand{display:flex;align-items:center;gap:12px;margin:2px 8px 22px}
+.ball{
+  width:40px;height:40px;border-radius:50%;position:relative;
+  background:linear-gradient(#f04450 0 47%,#f3f6fb 47% 53%,#1b2330 53%);
+  box-shadow:0 0 0 5px #161d2a,0 8px 25px rgba(239,51,64,.28);
+}
+.ball:after{content:"";position:absolute;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid #1b2330;left:11px;top:11px}
+.brand strong{font-size:17px}.brand span{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.nav-title{font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:#65738b;padding:12px 10px 8px}
+.nav-btn{
+  width:100%;border:0;background:transparent;color:#aab5c8;text-align:left;padding:9px 10px;border-radius:10px;
+  display:flex;align-items:center;justify-content:space-between;transition:.18s
+}
+.nav-btn:hover,.nav-btn.active{background:#182131;color:#fff}.nav-btn b{font-size:11px;color:#5f6c80}
+.sidebar-footer{margin-top:20px;padding:10px;color:#65738b;font-size:11px;line-height:1.5}
+.main{min-width:0}
+.topbar{
+  position:sticky;top:0;z-index:10;height:68px;border-bottom:1px solid var(--border);
+  background:rgba(10,13,20,.82);backdrop-filter:blur(18px);display:flex;align-items:center;gap:10px;padding:0 28px;
+}
+.api-status{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;margin-left:auto}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+.icon-btn,.ghost{
+  border:1px solid var(--border);background:#121925;color:#b9c3d4;border-radius:10px;padding:8px 11px
+}
+.icon-btn:hover,.ghost:hover{border-color:#40506b;color:#fff}
+.content{max-width:1500px;margin:0 auto;padding:34px 30px 70px}
+.hero{display:flex;justify-content:space-between;gap:24px;align-items:end;margin-bottom:28px}
+.eyebrow{color:var(--red2);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:11px}
+h1{font-size:clamp(30px,4vw,50px);line-height:1.03;margin:7px 0 10px;letter-spacing:-.04em}
+.hero p{color:var(--muted);max-width:720px;margin:0;line-height:1.6}
+.hero-actions{display:flex;gap:9px;flex-wrap:wrap}
+.card{
+  background:linear-gradient(180deg,rgba(21,28,41,.95),rgba(14,20,30,.96));
+  border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)
+}
+.grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
+.card-head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:15px;align-items:center}
+.card-head h2{font-size:15px;margin:0}.sub{font-size:11px;color:var(--muted)}
+.controls{padding:18px 20px}
+.row{display:flex;gap:9px;flex-wrap:wrap}
+.input,.select{
+  width:100%;border:1px solid var(--border);background:#0c121c;color:#edf3ff;padding:11px 12px;border-radius:11px;outline:0
+}
+.input:focus,.select:focus{border-color:#4c6385;box-shadow:0 0 0 3px rgba(77,163,255,.08)}
+.search-wrap{position:relative;flex:1;min-width:220px}
+.search-wrap .input{padding-left:38px}
+.search-icon{position:absolute;left:13px;top:11px;color:#65738b}
+.primary{
+  border:0;border-radius:11px;padding:11px 16px;color:#10141c;font-weight:800;
+  background:linear-gradient(135deg,#ffd23f,#ffae35);box-shadow:0 8px 24px rgba(255,174,53,.18)
+}
+.primary:hover{transform:translateY(-1px)}
+.red-btn{background:linear-gradient(135deg,#ff5a66,#e72e3c);color:#fff}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.quick button{border:1px solid var(--border);background:#0e1520;color:#b9c3d4;padding:10px;border-radius:10px;text-align:left}
+.quick button:hover{border-color:#475a78;color:#fff}
+.result{
+  min-height:320px;max-height:680px;overflow:auto;padding:18px 20px;
+  background:#0a0f17;border-radius:0 0 var(--radius) var(--radius)
+}
+.empty{min-height:280px;display:grid;place-items:center;text-align:center;color:#65738b}
+.empty .poke{font-size:54px;opacity:.35}
+pre{margin:0;font:12px/1.65 "SFMono-Regular",Consolas,monospace;color:#c9d4e8;white-space:pre-wrap;word-break:break-word}
+.json-key{color:#82b6ff}.json-string{color:#9be6a8}.json-number{color:#ffd27d}
+.endpoint-bar{display:grid;grid-template-columns:170px 1fr auto;gap:8px;margin-bottom:12px}
+.method{display:grid;place-items:center;border-radius:10px;background:#142237;color:#75b8ff;font-weight:900;font-size:12px}
+.endpoint{font:12px monospace;color:#aebbd0;background:#0c121c;border:1px solid var(--border);padding:11px;border-radius:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.small{font-size:11px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.stat{background:#0e1520;border:1px solid var(--border);padding:13px;border-radius:12px}.stat b{display:block;font-size:20px}.stat span{font-size:10px;color:var(--muted)}
+.pokemon-card{display:grid;grid-template-columns:160px 1fr;gap:22px;align-items:center}
+.poke-art{height:180px;border-radius:18px;background:radial-gradient(circle,#24324b,#101722);display:grid;place-items:center}
+.poke-art img{width:155px;height:155px;image-rendering:auto;filter:drop-shadow(0 16px 15px rgba(0,0,0,.45))}
+.poke-name{font-size:29px;font-weight:900;text-transform:capitalize}.id{color:#64738a;font-family:monospace}
+.types{display:flex;gap:7px;margin:9px 0 16px}.type{padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800;text-transform:uppercase;background:#263246}
+.statbar{display:grid;grid-template-columns:75px 1fr 34px;gap:8px;align-items:center;font-size:11px;margin:7px 0}.bar{height:6px;background:#222d3e;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#4da3ff,#a98cff);border-radius:99px}
+.history{display:flex;flex-direction:column;gap:6px;max-height:250px;overflow:auto;padding:12px 20px}
+.history-item{border:1px solid var(--border);background:#0d141f;border-radius:9px;padding:9px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.history-item button{background:none;border:0;color:#9ba9bd;text-align:left;flex:1}
+.badge{font-size:10px;padding:4px 7px;border-radius:6px;background:#172238;color:#86baff}
+.tabs{display:flex;gap:6px;overflow:auto;padding:12px 20px 0;border-bottom:1px solid var(--border)}
+.tab{border:0;background:none;color:#748198;padding:9px 8px;border-bottom:2px solid transparent;white-space:nowrap}.tab.active{color:#fff;border-color:var(--red)}
+.detail{padding:18px 20px}.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.kv{padding:10px;background:#0d141f;border:1px solid var(--border);border-radius:10px}.kv span{font-size:10px;color:#6f7d91}.kv b{display:block;font-size:12px;margin-top:3px;word-break:break-word}
+.footer{color:#59677b;text-align:center;font-size:11px;padding:30px}
+@media(max-width:1050px){.app{grid-template-columns:230px 1fr}.grid{grid-template-columns:1fr}.quick{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.app{display:block}.sidebar{display:none}.topbar{padding:0 15px}.content{padding:22px 14px 50px}.hero{display:block}.hero-actions{margin-top:15px}.pokemon-card{grid-template-columns:1fr}.endpoint-bar{grid-template-columns:1fr}.method{padding:9px}.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
 </head>
 <body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="ball"></div><div><strong>PokéAPI Lab</strong><span>Senior API Explorer</span></div></div>
+  <div class="nav-title">Explorador</div>
+  <button class="nav-btn active" data-group="all">Todos los recursos <b>ALL</b></button>
+  <button class="nav-btn" data-group="pokemon">Pokémon <b>CORE</b></button>
+  <button class="nav-btn" data-group="items">Items & berries <b>ITEM</b></button>
+  <button class="nav-btn" data-group="moves">Moves <b>MOVE</b></button>
+  <button class="nav-btn" data-group="evolution">Evolution <b>EVOL</b></button>
+  <button class="nav-btn" data-group="locations">Locations <b>WORLD</b></button>
+  <button class="nav-btn" data-group="games">Games & regions <b>GAME</b></button>
+  <button class="nav-btn" data-group="contests">Contests <b>CON</b></button>
+  <button class="nav-btn" data-group="utility">Utility <b>UTIL</b></button>
+  <div class="nav-title">Herramientas</div>
+  <button class="nav-btn" id="navHistory">Historial <b id="historyCount">0</b></button>
+  <button class="nav-btn" id="navFavs">Favoritos <b id="favCount">0</b></button>
+  <div class="sidebar-footer">PokéAPI Lab no almacena tus consultas en ningún servidor. Favoritos e historial viven en tu navegador.</div>
+</aside>
 
-<header>
-    <h1 class="titulo">Tiya Jesupas</h1>
-    <p>La mejor tienda de cabezaniperos</p>
+<main class="main">
+<header class="topbar">
+  <button class="icon-btn" id="mobileHome">⌂</button>
+  <span class="small">PokéAPI</span>
+  <div class="api-status"><i class="dot"></i> API online · REST v2</div>
+  <button class="icon-btn" id="themeInfo" title="Información">?</button>
 </header>
 
-<div class="centro">
-    🦄❤️🐉
-</div>
-
-<div class="texto">
-    No veas popo
-</div>
-
-<main>
-    <div class="producto">
-        <h2>Cabezanipero</h2>
-        <p class="precio">20€</p>
-        <button onclick="comprar()">Comprar</button>
+<section class="content">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">Interactive API Workbench</div>
+      <h1>Explora todo el universo de PokéAPI.</h1>
+      <p>Busca Pokémon, inspecciona cualquier recurso REST, navega relaciones, pagina colecciones y visualiza las respuestas JSON. Todo desde un único archivo HTML.</p>
     </div>
-
-    <div class="carrito">
-        <h3>Carrito</h3>
-        <p>Productos: <span id="contador">0</span></p>
-        <p>Total: <span id="total">0</span> €</p>
-        <button onclick="vaciarCarrito()">Vaciar carrito</button>
+    <div class="hero-actions">
+      <button class="ghost" id="randomBtn">⚡ Pokémon aleatorio</button>
+      <button class="primary red-btn" id="healthBtn">Probar API</button>
     </div>
+  </div>
+
+  <div class="grid">
+    <section class="card">
+      <div class="card-head"><div><h2>Consulta rápida</h2><div class="sub">Ideal para Pokémon, movimientos, items y especies</div></div><span class="badge">GET</span></div>
+      <div class="controls">
+        <div class="row">
+          <div class="search-wrap">
+            <span class="search-icon">⌕</span>
+            <input id="quickInput" class="input" placeholder="Ej. pikachu, charizard, thunderbolt..." autocomplete="off">
+          </div>
+          <select id="quickType" class="select" style="max-width:190px">
+            <option value="pokemon">Pokémon</option>
+            <option value="pokemon-species">Especie</option>
+            <option value="move">Movimiento</option>
+            <option value="ability">Habilidad</option>
+            <option value="item">Item</option>
+            <option value="berry">Baya</option>
+            <option value="location">Localización</option>
+            <option value="type">Tipo</option>
+            <option value="generation">Generación</option>
+          </select>
+          <button class="primary" id="quickBtn">Consultar</button>
+        </div>
+        <div class="quick">
+          <button data-q="pikachu">⚡ Pikachu</button><button data-q="charizard">🔥 Charizard</button>
+          <button data-q="mewtwo">🧬 Mewtwo</button><button data-q="gengar">👻 Gengar</button>
+        </div>
+        <div id="quickStats" class="stats" style="display:none"></div>
+      </div>
+      <div id="quickResult" class="result"><div class="empty"><div><div class="poke">◓</div><div>Escribe un nombre y consulta la API.</div></div></div></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><div><h2>REST Workbench</h2><div class="sub">Acceso genérico a los recursos de PokéAPI</div></div><span id="workbenchBadge" class="badge">READY</span></div>
+      <div class="controls">
+        <div class="endpoint-bar">
+          <div class="method">GET</div>
+          <input id="pathInput" class="input" value="/api/v2/pokemon?limit=20&offset=0" spellcheck="false">
+          <button class="primary" id="runBtn">Ejecutar</button>
+        </div>
+        <div class="row">
+          <button class="ghost" id="prevBtn">← Anterior</button>
+          <button class="ghost" id="nextBtn">Siguiente →</button>
+          <button class="ghost" id="copyBtn">Copiar JSON</button>
+          <button class="ghost" id="prettyBtn">Pretty</button>
+        </div>
+      </div>
+      <div class="tabs"><button class="tab active" data-tab="response">Respuesta</button><button class="tab" data-tab="links">Links</button><button class="tab" data-tab="meta">Meta</button></div>
+      <div id="workResult" class="result"><div class="empty"><div><div class="poke">⌁</div><div>Ejecuta cualquier GET de la API v2.</div></div></div></div>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:18px">
+    <div class="card-head">
+      <div><h2>Catálogo completo de recursos</h2><div class="sub">Incluye los endpoints REST públicos de PokéAPI v2</div></div>
+      <input id="resourceFilter" class="input" style="max-width:300px" placeholder="Filtrar recursos...">
+    </div>
+    <div id="resourceList" class="detail"></div>
+  </section>
+
+  <section class="card" id="historyCard" style="margin-top:18px">
+    <div class="card-head"><div><h2>Historial de requests</h2><div class="sub">Tus últimas consultas, guardadas localmente</div></div><button class="ghost" id="clearHistory">Limpiar</button></div>
+    <div id="history" class="history"><div class="small">Todavía no hay requests.</div></div>
+  </section>
+
+  <div class="footer">PokéAPI Lab · Cliente frontend · Sin backend · Los datos proceden de PokéAPI.</div>
+</section>
 </main>
+</div>
 
 <script>
-    let contador = 0;
-    let total = 0;
-    const precio = 20;
+const API = "https://pokeapi.co";
+const resources = [
+  ["berry","Berries","berry","items","Bayas y sabores"],
+  ["berry-firmness","Berry Firmness","berry-firmness","items","Firmeza de las bayas"],
+  ["berry-flavor","Berry Flavor","berry-flavor","items","Sabores y preferencias"],
+  ["contest-type","Contest Type","contest-type","contests","Tipos de concurso"],
+  ["contest-effect","Contest Effect","contest-effect","contests","Efectos de concurso"],
+  ["super-contest-effect","Super Contest Effect","super-contest-effect","contests","Efectos de Super Concurso"],
+  ["encounter-method","Encounter Method","encounter-method","utility","Métodos de encuentro"],
+  ["encounter-condition","Encounter Condition","encounter-condition","utility","Condiciones de encuentro"],
+  ["encounter-condition-value","Encounter Condition Value","encounter-condition-value","utility","Valores de condición"],
+  ["evolution-chain","Evolution Chain","evolution-chain","evolution","Cadenas evolutivas"],
+  ["evolution-trigger","Evolution Trigger","evolution-trigger","evolution","Disparadores evolutivos"],
+  ["generation","Generation","generation","games","Generaciones"],
+  ["pokedex","Pokédex","pokedex","games","Pokédex regionales"],
+  ["version","Version","version","games","Versiones de juegos"],
+  ["version-group","Version Group","version-group","games","Grupos de versiones"],
+  ["item","Item","item","items","Objetos"],
+  ["item-attribute","Item Attribute","item-attribute","items","Atributos de objetos"],
+  ["item-category","Item Category","item-category","items","Categorías de objetos"],
+  ["item-fling-effect","Item Fling Effect","item-fling-effect","items","Efectos de lanzamiento"],
+  ["item-pocket","Item Pocket","item-pocket","items","Bolsillos"],
+  ["location","Location","location","locations","Localizaciones"],
+  ["location-area","Location Area","location-area","locations","Áreas de localización"],
+  ["pal-park-area","Pal Park Area","pal-park-area","locations","Áreas de Pal Park"],
+  ["region","Region","region","locations","Regiones"],
+  ["machine","Machine","machine","utility","Máquinas"],
+  ["move","Move","move","moves","Movimientos"],
+  ["move-ailment","Move Ailment","move-ailment","moves","Estados causados"],
+  ["move-battle-style","Move Battle Style","move-battle-style","moves","Estilos de batalla"],
+  ["move-category","Move Category","move-category","moves","Categorías de movimiento"],
+  ["move-damage-class","Move Damage Class","move-damage-class","moves","Clases de daño"],
+  ["move-learn-method","Move Learn Method","move-learn-method","moves","Métodos de aprendizaje"],
+  ["move-target","Move Target","move-target","moves","Objetivos"],
+  ["ability","Ability","ability","pokemon","Habilidades"],
+  ["characteristic","Characteristic","characteristic","pokemon","Características"],
+  ["egg-group","Egg Group","egg-group","pokemon","Grupos huevo"],
+  ["gender","Gender","gender","pokemon","Géneros"],
+  ["growth-rate","Growth Rate","growth-rate","pokemon","Ritmos de crecimiento"],
+  ["nature","Nature","nature","pokemon","Naturalezas"],
+  ["pokeathlon-stat","Pokeathlon Stat","pokeathlon-stat","pokemon","Estadísticas Pokéathlon"],
+  ["pokemon","Pokémon","pokemon","pokemon","Pokémon individuales"],
+  ["pokemon-color","Pokémon Color","pokemon-color","pokemon","Colores"],
+  ["pokemon-form","Pokémon Form","pokemon-form","pokemon","Formas"],
+  ["pokemon-habitat","Pokémon Habitat","pokemon-habitat","pokemon","Hábitats"],
+  ["pokemon-shape","Pokémon Shape","pokemon-shape","pokemon","Formas corporales"],
+  ["pokemon-species","Pokémon Species","pokemon-species","pokemon","Especies"],
+  ["stat","Stat","stat","pokemon","Estadísticas"],
+  ["type","Type","type","pokemon","Tipos"],
+  ["language","Language","language","utility","Idiomas"]
+];
 
-    function comprar() {
-        contador++;
-        total += precio;
+const state = {
+  lastJson:null, lastPath:"", lastList:null, pretty:true,
+  history: JSON.parse(localStorage.getItem("pokeapi-lab-history")||"[]"),
+  favs: JSON.parse(localStorage.getItem("pokeapi-lab-favs")||"[]")
+};
 
-        document.getElementById("contador").innerText = contador;
-        document.getElementById("total").innerText = total;
-    }
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
 
-    function vaciarCarrito() {
-        contador = 0;
-        total = 0;
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function prettyJSON(obj){
+  return JSON.stringify(obj,null,2)
+    .replace(/("(?:\\.|[^"\\])*")\s*:/g,'<span class="json-key">$1</span>:')
+    .replace(/("(?:\\.|[^"\\])*")/g,'<span class="json-string">$1</span>')
+    .replace(/\b(-?\d+(?:\.\d+)?)\b/g,'<span class="json-number">$1</span>');
+}
+function save(){
+  localStorage.setItem("pokeapi-lab-history",JSON.stringify(state.history.slice(0,30)));
+  localStorage.setItem("pokeapi-lab-favs",JSON.stringify(state.favs));
+  $("#historyCount").textContent=state.history.length;
+  $("#favCount").textContent=state.favs.length;
+}
+function addHistory(path,status){
+  state.history = [{path,status,time:new Date().toLocaleTimeString(),id:Date.now()},...state.history.filter(x=>x.path!==path)].slice(0,30);
+  save(); renderHistory();
+}
+function renderHistory(){
+  const el=$("#history");
+  if(!state.history.length){el.innerHTML='<div class="small">Todavía no hay requests.</div>';return}
+  el.innerHTML=state.history.map(x=>`<div class="history-item"><button data-history="${esc(x.path)}"><span class="badge">${x.status||"GET"}</span> <code>${esc(x.path)}</code><br><span class="small">${x.time}</span></button><span>↗️</span></div>`).join("");
+  $$("#history [data-history]").forEach(b=>b.onclick=()=>{ $("#pathInput").value=b.dataset.history; runWorkbench(); window.scrollTo({top:0,behavior:"smooth"});});
+}
+function renderResources(filter="",group="all"){
+  const f=filter.toLowerCase();
+  const list=resources.filter(r=>(group==="all"||r[3]===group)&&(!f||r.join(" ").toLowerCase().includes(f)));
+  $("#resourceList").innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:9px">${
+    list.map(r=>`<button class="quick-resource" data-path="/api/v2/${r[2]}" style="border:1px solid var(--border);background:#0d141f;color:#d8e0ee;text-align:left;padding:12px;border-radius:11px">
+      <div style="display:flex;justify-content:space-between;gap:8px"><strong>${r[1]}</strong><span class="badge">${r[2]}</span></div>
+      <div class="small" style="margin-top:6px">${r[4]}</div>
+    </button>`).join("")
+  }</div><div class="small" style="margin-top:12px">Mostrando ${list.length} de ${resources.length} recursos.</div>`;
+  $$(".quick-resource").forEach(b=>b.onclick=()=>{ $("#pathInput").value=b.dataset.path+"?limit=20"; runWorkbench();});
+}
+async function fetchJSON(path){
+  const normalized=path.startsWith("http")?path:API+(path.startsWith("/")?path:"/"+path);
+  const t=performance.now();
+  const res=await fetch(normalized,{headers:{"Accept":"application/json"}});
+  const ms=Math.round(performance.now()-t);
+  let data;
+  try{data=await res.json()}catch{data={error:"La respuesta no es JSON"}}
+  return {res,data,ms,url:normalized};
+}
+function setLoading(el,msg="Consultando PokéAPI..."){
+  el.innerHTML=`<div class="empty"><div><div class="poke">◌</div><div>${msg}</div></div></div>`;
+}
+async function runQuick(nameOverride){
+  const name=(nameOverride||$("#quickInput").value).trim().toLowerCase();
+  if(!name)return;
+  $("#quickInput").value=name;
+  const type=$("#quickType").value;
+  const path=`/api/v2/${type}/${encodeURIComponent(name)}`;
+  setLoading($("#quickResult"));
+  try{
+    const {res,data,ms}=await fetchJSON(path);
+    addHistory(path,res.status);
+    if(!res.ok){$("#quickResult").innerHTML=`<div class="empty"><div><div style="font-size:38px">⚠</div><b>${res.status}</b><div class="small">${esc(data.detail||data.message||"Recurso no encontrado")}</div></div></div>`;return}
+    if(type==="pokemon") renderPokemon(data,ms);
+    else renderGeneric(data,ms,$("#quickResult"));
+  }catch(e){$("#quickResult").innerHTML=`<div class="empty"><div>❌ ${esc(e.message)}</div></div>`}
+}
+function renderPokemon(p,ms){
+  const fav=state.favs.includes(`pokemon:${p.id}`);
+  const stats=p.stats||[];
+  $("#quickStats").style.display="grid";
+  $("#quickStats").innerHTML=`<div class="stat"><b>${p.base_experience??"—"}</b><span>BASE XP</span></div><div class="stat"><b>${p.height/10} m</b><span>ALTURA</span></div><div class="stat"><b>${p.weight/10} kg</b><span>PESO</span></div><div class="stat"><b>${p.moves?.length||0}</b><span>MOVIMIENTOS</span></div>`;
+  $("#quickResult").innerHTML=`<div class="detail">
+    <div class="pokemon-card">
+      <div class="poke-art"><img src="${esc(p.sprites?.other?.["official-artwork"]?.front_default||p.sprites?.front_default||"")}" alt="${esc(p.name)}"></div>
+      <div>
+        <div><span class="id">#${String(p.id).padStart(4,"0")}</span></div>
+        <div class="poke-name">${esc(p.name)}</div>
+        <div class="types">${p.types.map(t=>`<span class="type">${esc(t.type.name)}</span>`).join("")}</div>
+        <button class="ghost" id="favPokemon">${fav?"★ Quitar favorito":"☆ Añadir a favoritos"}</button>
+        <span class="small" style="margin-left:8px">${ms} ms</span>
+      </div>
+    </div>
+    <h3 style="margin:24px 0 10px;font-size:13px">Estadísticas base</h3>
+    ${stats.map(s=>`<div class="statbar"><span>${esc(s.stat.name)}</span><div class="bar"><i style="width:${Math.min(100,s.base_stat/2)}%"></i></div><b>${s.base_stat}</b></div>`).join("")}
+    <div class="detail-grid" style="margin-top:18px">
+      <div class="kv"><span>Abilities</span><b>${p.abilities.map(a=>esc(a.ability.name)).join(", ")}</b></div>
+      <div class="kv"><span>Species</span><b>${esc(p.species?.name||"—")}</b></div>
+      <div class="kv"><span>Sprites</span><b>${Object.keys(p.sprites||{}).filter(k=>p.sprites[k]).length} disponibles</b></div>
+    </div>
+  </div>`;
+  $("#favPokemon").onclick=()=>{
+    const key=`pokemon:${p.id}`;
+    if(state.favs.includes(key))state.favs=state.favs.filter(x=>x!==key);else state.favs.push(key);
+    save(); renderPokemon(p,ms);
+  };
+}
+function renderGeneric(data,ms,el){
+  if(data.results){
+    state.lastList=data;
+    el.innerHTML=`<div class="detail"><div class="small">Resultados: ${data.count??"—"} · Tiempo: ${ms} ms</div>
+    <div style="display:grid;gap:7px;margin-top:12px">${data.results.map((x,i)=>`<button class="history-item api-link" data-url="${esc(x.url)}"><span><b>${String(i+1).padStart(2,"0")}</b> &nbsp; ${esc(x.name||x.url)}</span><span>→</span></button>`).join("")}</div></div>`;
+    el.querySelectorAll(".api-link").forEach(b=>b.onclick=()=>{const u=new URL(b.dataset.url);$("#pathInput").value=u.pathname+u.search;runWorkbench()});
+  }else{
+    el.innerHTML=`<div class="detail"><div class="small">Respuesta recibida en ${ms} ms</div><pre style="margin-top:12px">${prettyJSON(data)}</pre></div>`;
+  }
+}
+async function runWorkbench(){
+  let path=$("#pathInput").value.trim();
+  if(!path)return;
+  if(path.startsWith(API))path=path.slice(API.length);
+  if(!path.startsWith("/"))path="/"+path;
+  $("#pathInput").value=path;
+  setLoading($("#workResult"));
+  $("#workbenchBadge").textContent="LOADING";
+  try{
+    const {res,data,ms,url}=await fetchJSON(path);
+    state.lastJson=data;state.lastPath=path;addHistory(path,res.status);
+    $("#workbenchBadge").textContent=`${res.status} · ${ms}ms`;
+    if(!res.ok){$("#workResult").innerHTML=`<div class="detail"><div class="small">HTTP ${res.status}</div><pre style="margin-top:12px">${prettyJSON(data)}</pre></div>`;return}
+    renderGeneric(data,ms,$("#workResult"));
+  }catch(e){$("#workbenchBadge").textContent="ERROR";$("#workResult").innerHTML=`<div class="empty"><div>❌ ${esc(e.message)}<br><span class="small">Comprueba tu conexión y que el endpoint sea válido.</span></div></div>`}
+}
+function randomPokemon(){runQuick(String(Math.floor(Math.random()*1025)+1))}
+async function health(){
+  $("#healthBtn").textContent="Probando…";
+  try{
+    const {res,ms}=await fetchJSON("/api/v2/pokemon-species/1");
+    $("#healthBtn").textContent=res.ok?`✓ API ${ms}ms`:"⚠ API";
+    setTimeout(()=>$("#healthBtn").textContent="Probar API",1800);
+  }catch{$("#healthBtn").textContent="Sin conexión";setTimeout(()=>$("#healthBtn").textContent="Probar API",1800)}
+}
+$("#quickBtn").onclick=()=>runQuick();
+$("#quickInput").onkeydown=e=>{if(e.key==="Enter")runQuick()};
+$$(".quick button").forEach(b=>b.onclick=()=>runQuick(b.dataset.q));
+$("#runBtn").onclick=runWorkbench;
+$("#pathInput").onkeydown=e=>{if(e.key==="Enter")runWorkbench()};
+$("#randomBtn").onclick=randomPokemon;
+$("#healthBtn").onclick=health;
+$("#copyBtn").onclick=async()=>{if(state.lastJson){await navigator.clipboard.writeText(JSON.stringify(state.lastJson,null,2));$("#copyBtn").textContent="✓ Copiado";setTimeout(()=>$("#copyBtn").textContent="Copiar JSON",1200)}};
+$("#prettyBtn").onclick=()=>{state.pretty=!state.pretty;if(state.lastJson)$("#workResult").innerHTML=`<div class="detail"><pre>${state.pretty?prettyJSON(state.lastJson):esc(JSON.stringify(state.lastJson))}</pre></div>`};
+$("#prevBtn").onclick=()=>{if(state.lastJson?.previous){const u=new URL(state.lastJson.previous);$("#pathInput").value=u.pathname+u.search;runWorkbench()}};
+$("#nextBtn").onclick=()=>{if(state.lastJson?.next){const u=new URL(state.lastJson.next);$("#pathInput").value=u.pathname+u.search;runWorkbench()}};
+$("#resourceFilter").oninput=e=>renderResources(e.target.value,$(".nav-btn.active")?.dataset.group||"all");
+$$(".nav-btn[data-group]").forEach(b=>b.onclick=()=>{
+  $$(".nav-btn[data-group]").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+  renderResources($("#resourceFilter").value,b.dataset.group);
+  document.querySelector("#resourceList").scrollIntoView({behavior:"smooth",block:"start"});
+});
+$("#clearHistory").onclick=()=>{state.history=[];save();renderHistory()};
+$("#navHistory").onclick=()=>$("#historyCard").scrollIntoView({behavior:"smooth"});
+$("#navFavs").onclick=()=>{
+  if(!state.favs.length){alert("Todavía no tienes favoritos.");return}
+  alert("Favoritos: "+state.favs.join(", "));
+};
+$("#themeInfo").onclick=()=>alert("PokéAPI Lab usa directamente https://pokeapi.co/api/v2. No necesitas backend: el navegador realiza las peticiones REST.");
+$("#mobileHome").onclick=()=>window.scrollTo({top:0,behavior:"smooth"});
 
-        document.getElementById("contador").innerText = contador;
-        document.getElementById("total").innerText = total;
-    }
+renderResources();renderHistory();save();
 </script>
-
 </body>
 </html>
